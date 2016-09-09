@@ -1,4 +1,6 @@
-// New Selenium Example Script
+// Todo App - Selenium Example Script
+// see https://github.com/SeleniumHQ/selenium/wiki/WebDriverJs for details
+// runs test against http://crossbrowsertesting.github.io/todo-app.html
 
 var webdriver = require('selenium-webdriver');
 var SeleniumServer = require('selenium-webdriver/remote').SeleniumServer;
@@ -9,7 +11,7 @@ var username = 'user@email.com'; //replace with your email address
 var authkey = '12345'; //replace with your authkey 
 
 var capabilities = {
-    'name': 'Selenium Test Example',
+    'name': 'Todo App Selenium Test Example',
     'build': '1.0',
     'os_api_name': 'Win7x64-C2',
     'browser_api_name': 'IE10',
