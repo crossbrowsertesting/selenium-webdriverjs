@@ -16,9 +16,9 @@ var caps = {
     browser_api_name : 'IE10', 
     os_api_name : 'Win7x64-C2', 
     screen_resolution : '1024x768',
-    record_video : "true",
-    record_network : "true",
-    browserName : "internet explorer", // <---- this needs to be the browser type in lower case: firefox, internet explorer, chrome, opera, or safari
+    record_video : 'true',
+    record_network : 'true',
+    browserName : 'internet explorer', // <---- this needs to be the browser type in lower case: firefox, internet explorer, chrome, opera, or safari
     username : username,
     password : authkey
 };
@@ -36,7 +36,7 @@ var driver = new webdriver.Builder()
 driver.getSession().then(function(session){
     sessionId = session.id_; //need for API calls
 });
-driver.get("http://crossbrowsertesting.github.io/selenium_example_page.html");
+driver.get('http://crossbrowsertesting.github.io/selenium_example_page.html');
 driver.getTitle().then(function(title){
     console.log('page title is ', title)
 });
