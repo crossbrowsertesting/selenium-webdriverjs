@@ -41,7 +41,6 @@ var driver = new webdriver.Builder()
 
 // All driver calls are automatically queued by flow control.
 // Async functions outside of driver can use call() function.
-// To get a feel for the order of execution the console.logs happen after each command is actually run
 console.log('Waiting on the browser to be launched and the session to start');
 
 driver.getSession().then(function(session){
