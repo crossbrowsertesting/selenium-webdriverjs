@@ -5,6 +5,7 @@
 var webdriver = require('selenium-webdriver');
 var SeleniumServer = require('selenium-webdriver/remote').SeleniumServer;
 var request = require('request');
+var assert = require('selenium-webdriver/testing/assert');
 var remoteHub = 'http://hub.crossbrowsertesting.com:80/wd/hub';
 
 var username = 'user@email.com'; //replace with your email address 
@@ -38,7 +39,8 @@ driver.getSession().then(function(session){
 });
 driver.get('http://crossbrowsertesting.github.io/selenium_example_page.html');
 driver.getTitle().then(function(title){
-    console.log('page title is ', title)
+    console.log('page title is ', title);
+    assert(title).equals('Selenium Test Example Page');
 });
 
 driver.quit();
