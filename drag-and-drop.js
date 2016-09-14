@@ -1,6 +1,6 @@
 // Drag and Drop - Selenium Example Script
 // see https://github.com/SeleniumHQ/selenium/wiki/WebDriverJs for details
-// runs test against http://crossbrowsertesting.github.io/login-form.html
+// runs test against http://crossbrowsertesting.github.io/drag-and-drop.html
 
 var webdriver = require('selenium-webdriver');
 var SeleniumServer = require('selenium-webdriver/remote').SeleniumServer;
@@ -8,8 +8,8 @@ var request = require('request');
 var remoteHub = 'http://hub.crossbrowsertesting.com:80/wd/hub';
 var assert = require('selenium-webdriver/testing/assert');
 
-var username = 'luke.kende@gmail.com';
-var authkey = 'u7fb872584b5f108';  
+var username = 'user@email.com'; //replace with your email address 
+var authkey = '12345'; //replace with your authkey  
 
 var capabilities = {
     name : 'Drag and Drop - Selenium Test Example',
