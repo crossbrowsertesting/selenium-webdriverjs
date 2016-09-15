@@ -12,7 +12,7 @@ var username = 'user@email.com'; //replace with your email address
 var authkey = '12345'; //replace with your authkey  
 
 var capabilities = {
-    name : 'Drag and Drop - Selenium Test Example',
+    name : 'Drag-and-Drop Example',
     build :  '1.0',
     browser_api_name : 'Chrome53', 
     os_api_name : 'Win8', 

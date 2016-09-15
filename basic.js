@@ -12,7 +12,7 @@ var username = 'user@email.com'; //replace with your email address
 var authkey = '12345'; //replace with your authkey 
  
 var caps = {
-    name : 'Basic - Selenium Test Example',
+    name : 'Basic Example',
     build :  '1.0',
     browser_api_name : 'IE10', 
     os_api_name : 'Win7x64-C2', 

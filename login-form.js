@@ -11,7 +11,7 @@ var username = 'user@email.com'; //replace with your email address
 var authkey = '12345'; //replace with your authkey  
 
 var capabilities = {
-    name : 'Login Form - Selenium Test Example',
+    name : 'Login Form Example',
     build :  '1.0',
     browser_api_name : 'Chrome53', 
     os_api_name : 'Win8', 
