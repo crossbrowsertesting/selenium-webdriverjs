@@ -33,7 +33,7 @@ console.log('Connection to the CrossBrowserTesting remote server');
 
 var driver = new webdriver.Builder()
             .usingServer(remoteHub)
-            .withCapabilities(capabilities)
+            .withCapabilities(caps)
             .build();
 
 //console.log('driver is ', driver)
