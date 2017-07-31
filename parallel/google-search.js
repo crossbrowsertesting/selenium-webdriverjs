@@ -12,7 +12,7 @@ var remoteHub = "http://" + username + ":" + authkey + "@hub.crossbrowsertesting
 
 //add multiple browsers to run in parallel here
 var browsers = [
-   { browserName: 'firefox', os_api_name: 'Win7-C2', browser_api_name: 'FF27', screen_resolution: '1024x768' },
+   { browserName: 'firefox', os_api_name: 'Win7', browser_api_name: 'FF27', screen_resolution: '1024x768' },
    { browserName: 'chrome', os_api_name: 'Mac10.9', browser_api_name: 'Chrome40x64', screen_resolution: '1024x768' },
    { browserName: 'internet explorer', os_api_name: 'Win8.1', browser_api_name: 'IE11', screen_resolution: '1024x768' }
 ];
