@@ -48,8 +48,9 @@ var flows = browsers.map(function(browser) {
             var sessionId = session.id_;
 
             driver.get('http://www.google.com');
-            driver.findElement(webdriver.By.name('q')).sendKeys('cross browser testing');
-            driver.findElement(webdriver.By.name('btnG')).click();
+            var element = driver.findElement(webdriver.By.name('q'));
+            element.sendKeys('cross browser testing');
+            element.submit();
             driver.call(takeSnapshot, null, sessionId);
             driver.getTitle().then(function(title) {
                 if (title !== ('cross browser testing - Google Search')) {
