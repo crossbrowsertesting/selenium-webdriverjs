@@ -6,7 +6,7 @@ var webdriver = require('selenium-webdriver');
 var SeleniumServer = require('selenium-webdriver/remote').SeleniumServer;
 var request = require('request');
 var remoteHub = 'http://hub.crossbrowsertesting.com:80/wd/hub';
-var assert = require('selenium-webdriver/testing/assert');
+var assert = require('assert')
 
 var username = 'user@email.com'; //replace with your email address 
 var authkey = '12345'; //replace with your authkey  
@@ -14,84 +14,81 @@ var authkey = '12345'; //replace with your authkey
 var caps = {
     name : 'Drag-and-Drop Example',
     build :  '1.0',
-    browser_api_name : 'IE10', 
-    os_api_name : 'Win7x64-C2', 
-    screen_resolution : '1024x768',
+    version : '72', 
+    platform : 'Windows 10', 
+    screen_resolution : '1366x768',
     record_video : 'true',
-    record_network : 'true',
-    browserName : 'internet explorer', // <---- this needs to be the browser type in lower case: firefox, internet explorer, chrome, opera, or safari
+    record_network : 'false',
+    browserName : 'Chrome',
     username : username,
     password : authkey
 };
 
 var sessionId = null;
 
-//register general error handler
-webdriver.promise.controlFlow().on('uncaughtException', webdriverErrorHandler);
 
 console.log('Connection to the CrossBrowserTesting remote server');
-
-var driver = new webdriver.Builder()
-            .usingServer(remoteHub)
-            .withCapabilities(caps)
-            .build();
-
-//console.log('driver is ', driver)
-
+async function dragDrop(){
+    try{
+    var driver = new webdriver.Builder()
+                .usingServer(remoteHub)
+                .withCapabilities(caps)
+                .build();
 
 
-// All driver calls are automatically queued by flow control.
-// Async functions outside of driver can use call() function.
-console.log('Waiting on the browser to be launched and the session to start');
+    console.log('Waiting on the browser to be launched and the session to start');
 
-driver.getSession().then(function(session){
-    sessionId = session.id_; //need for API calls
-    console.log('Session ID: ', sessionId); 
-    console.log('See your test run at: https://app.crossbrowsertesting.com/selenium/' + sessionId)
-});
+    await driver.getSession().then(function(session){
+        sessionId = session.id_; //need for API calls
+        console.log('Session ID: ', sessionId); 
+        console.log('See your test run at: https://app.crossbrowsertesting.com/selenium/' + sessionId)
+    });
 
-//load your URL
-driver.get('http://crossbrowsertesting.github.io/drag-and-drop.html');
+    //load your URL
+    await driver.get('http://crossbrowsertesting.github.io/drag-and-drop.html');
 
-//take snapshot via cbt api
-driver.call(takeSnapshot);
+    //take snapshot via cbt api
+    await driver.takeSnapshot();
+ 
+    //get draggable and droppable elements
+    var draggable = await driver.findElement(webdriver.By.id("draggable"));
+    var droppable = await driver.findElement(webdriver.By.id("droppable"));
 
-//get draggable and droppable elements
-var draggable = driver.findElement(webdriver.By.id("draggable"));
-var droppable = driver.findElement(webdriver.By.id("droppable"));
+    
+    //shortcut method for drag and drop
+    await driver.actions({bridge:true}).dragAndDrop(draggable,droppable).perform();
+   
+    //take snapshot via cbt api
+    await driver.takeSnapshot();
 
-//move draggable to droppable and release via actions
-// driver.actions()
-//     .mouseMove(draggable)
-//     .mouseDown()
-//     .mouseMove(droppable)
-//     .mouseUp()
-//     .perform();
+    
+    //wait on dropped in message
+    await droppable.findElement(webdriver.By.css("p")).getText().then(function(text){
+    assert.equal(text, 'Dropped!');
 
-//shortcut method for drag and drop
-driver.actions().dragAndDrop(draggable,droppable).perform();
+    //take snapshot via cbt api
+    await driver.takeSnapshot();
 
-//take snapshot via cbt api
-driver.call(takeSnapshot);
+    //quit the driver
+    await driver.quit()
 
-droppable.findElement(webdriver.By.css("p")).getText().then(function(text){
-    assert(text).equalTo('Dropped!');
-})
+    //set the score as passing
+    setScore('pass').then(function(result){
+        console.log('SUCCESS! set score to pass')
+    });
+    }
+    catch(e){
+        webdriverErrorHandler(e, driver)
+    }
+   
+}
 
-//quit the driver
-driver.quit()
-
-//set the score as passing
-driver.call(setScore, null, 'pass').then(function(result){
-    console.log('set score to pass')
-});
+dragDrop();
 
 
 //Call API to set the score
-function setScore(score) {
-
-    //webdriver has built-in promise to use
-    var deferred = webdriver.promise.defer();
+function setScore(score){
+    return new Promise((resolve, fulfill)=> {
     var result = { error: false, message: null }
 
     if (sessionId){
@@ -115,8 +112,6 @@ function setScore(score) {
                 result.error = false;
                 result.message = 'success';
             }
-
-            deferred.fulfill(result);
         })
         .auth(username, authkey);
     }
@@ -126,60 +121,58 @@ function setScore(score) {
         deferred.fulfill(result);
     }
 
-    return deferred.promise;
+    
+        result.error ? fulfill('Fail') : resolve('Pass');
+    });
 }
 
 //Call API to get a snapshot 
-function takeSnapshot() {
+webdriver.WebDriver.prototype.takeSnapshot = function() {
 
-    //webdriver has built-in promise to use
-    var deferred = webdriver.promise.defer();
-    var result = { error: false, message: null }
-    
-    if (sessionId){
-
-       
-        request.post(
-            'https://crossbrowsertesting.com/api/v3/selenium/' + sessionId + '/snapshots', 
-            function(error, response, body) {
-                if (error) {
-                    result.error = true;
-                    result.message = error;
-                }
-                else if (response.statusCode !== 200){
-                    result.error = true;
-                    result.message = body;
-                }
-                else{
-                    result.error = false;
-                    result.message = 'success';
-                }
-                //console.log('fulfilling promise in takeSnapshot')
-                deferred.fulfill(result);
-            }
-        )
-        .auth(username,authkey);
+    return new Promise((resolve, fulfill)=> { 
+        var result = { error: false, message: null }
         
-    }
-    else{
-        result.error = true;
-        result.message = 'Session Id was not defined';
-        deferred.fulfill(result); //never call reject as we don't need this to actually stop the test
-    }
+        if (sessionId){
+            request.post(
+                'https://crossbrowsertesting.com/api/v3/selenium/' + sessionId + '/snapshots', 
+                function(error, response, body) {
+                    if (error) {
+                        result.error = true;
+                        result.message = error;
+                    }
+                    else if (response.statusCode !== 200){
+                        result.error = true;
+                        result.message = body;
+                    }
+                    else{
+                        result.error = false;
+                        result.message = 'success';
+                    }
+                }
+            )
+            .auth(username,authkey);
+            
+        }
+        else{
+            result.error = true;
+            result.message = 'Session Id was not defined';
+           
+        }
 
-    return deferred.promise;
+            result.error ? fulfill('Fail') : resolve('Pass'); //never call reject as we don't need this to actually stop the test
+    });
 }
 
 //general error catching function
-function webdriverErrorHandler(err){
+function webdriverErrorHandler(err, driver){
 
-    console.error('There was an unhandled exception! ' + err);
+    console.error('There was an unhandled exception! ' + err.message);
 
     //if we had a session, end it and mark failed
     if (driver && sessionId){
         driver.quit();
         setScore('fail').then(function(result){
-            console.log('set score to fail')
+            console.log('FAILURE! set score to fail')
         })
     }
 }
