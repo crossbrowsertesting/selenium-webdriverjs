@@ -30,7 +30,7 @@ var flows = browsers.map(function(browser) {
             screen_resolution : browser.screen_resolution,
 
             record_video : "true",
-            //record_network : "true",
+            record_network : "false", // set to "true" to record network traffic
             record_snapshot :  "false",
          
             username : username,
